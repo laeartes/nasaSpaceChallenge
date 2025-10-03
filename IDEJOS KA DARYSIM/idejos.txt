@@ -5,4 +5,13 @@ Interaktyvus žinių grafas apie kosminę biologiją: jungia eksperimentų duome
 Virtualus simuliatorius: pasirenkamas organizmas (augalas, bakterija, žmogaus ląstelė), keičiasi parametrai (gravitacija, radiacija), sistema parodo numatomą poveikį augimui, genams ar fiziologijai. Naudinga edukacijai ir hipotezėms tikrinti.
 3. SpaceBioQA
 Klausimų–atsakymų sistema: naudodama NLP atsako į klausimus apie biologiją kosmose (pvz. “Kaip mikrogravitacija veikia augalų šaknis?”) ir pateikia šaltinius.
-
+4. AstroBio Atlas
+Žemėlapis, rodantis, kaip skirtingi organizmai (augalai, bakterijos, gyvūnai) reaguoja į kosmoso sąlygas. Vartotojas gali pasirinkti organizmą ir matyti santrauką su eksperimentų duomenimis.
+5. Gene2Space
+Įrankis, kuris parodo, kurie genai yra jautriausi kosminėms sąlygoms. Pvz. įvedus geną, sistema grąžina tyrimus, susijusius su radiacija ar mikrogravitacija.
+6. Space Health Monitor
+AI modelis, kuris prognozuoja žmogaus sveikatos rizikas (pvz. kaulų nykimą, imuniteto silpnėjimą) pagal kosminės aplinkos faktorius.
+7. AstroFood Planner
+Sistema, kuri naudoja kosmoso biologijos duomenis, kad optimizuotų augalų pasirinkimą kosminėms misijoms (kurie augalai geriausiai auga, turi didžiausią maistinę vertę ir atsparumą).
+8. MicroCosmos DB
+Specializuota duomenų bazė apie mikroorganizmus kosmose: jų mutacijas, atsparumą, naudą (pvz. fermentacija, atliekų perdirbimas). Su paprasta paieška ir filtravimu.
