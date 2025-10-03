@@ -1,0 +1,8 @@
+gpt idejos:
+1. SpaceBioGraph
+Interaktyvus žinių grafas apie kosminę biologiją: jungia eksperimentų duomenis, genus, poveikį mikrogravitacijai/radiacijai. Vartotojas gali vizualiai naršyti ryšius, filtruoti, ieškoti klausimais ir gauti santraukas.
+2. BioSimSpace
+Virtualus simuliatorius: pasirenkamas organizmas (augalas, bakterija, žmogaus ląstelė), keičiasi parametrai (gravitacija, radiacija), sistema parodo numatomą poveikį augimui, genams ar fiziologijai. Naudinga edukacijai ir hipotezėms tikrinti.
+3. SpaceBioQA
+Klausimų–atsakymų sistema: naudodama NLP atsako į klausimus apie biologiją kosmose (pvz. “Kaip mikrogravitacija veikia augalų šaknis?”) ir pateikia šaltinius.
+
