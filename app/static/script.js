@@ -95,6 +95,67 @@ function showSection(article, sec) {
     panel.appendChild(selectBtn);
 }
 
+// theme initialization and toggle
+function setTheme(name) {
+    document.body.classList.remove('dark-mode', 'light-mode');
+    document.body.classList.add(name + '-mode');
+    try { localStorage.setItem('theme', name); } catch (e) {}
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.innerText = name === 'dark' ? 'Switch to light' : 'Switch to dark';
+}
+
+function toggleTheme() {
+    const current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+}
+
+(function initTheme() {
+    try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') {
+            setTheme(saved);
+            return;
+        }
+    } catch (e) {}
+    setTheme('dark');
+})();
+
+// font size helpers and preferences
+function applyFontSize(name) {
+    const map = { small: '14px', medium: '16px', large: '18px', xlarge: '20px' };
+    const size = map[name] || map['medium'];
+    try { document.documentElement.style.fontSize = size; } catch (e) {}
+    try { localStorage.setItem('fontSize', name); } catch (e) {}
+}
+
+function increaseText() {
+    const sizes = ['small','medium','large','xlarge'];
+    const currentName = localStorage.getItem('fontSize') || 'medium';
+    const idx = Math.max(0, sizes.indexOf(currentName));
+    const next = sizes[Math.min(sizes.length-1, idx + 1)];
+    applyFontSize(next);
+}
+
+function decreaseText() {
+    const sizes = ['small','medium','large','xlarge'];
+    const currentName = localStorage.getItem('fontSize') || 'medium';
+    const idx = Math.max(0, sizes.indexOf(currentName));
+    const next = sizes[Math.max(0, idx - 1)];
+    applyFontSize(next);
+}
+
+function resetText() {
+    applyFontSize('medium');
+}
+
+(function initPreferences() {
+    try {
+        const savedFont = localStorage.getItem('fontSize');
+        if (savedFont) applyFontSize(savedFont);
+    } catch (e) {}
+})();
+
 document.addEventListener('keydown', function(e) {
     const el = document.activeElement;
     if (e.key === 'Enter' && (el && el.id === 'searchInput')) {

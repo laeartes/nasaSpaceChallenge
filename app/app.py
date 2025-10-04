@@ -14,10 +14,20 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "title": "webapp"
-    })
+	# provide navigation links and default accessibility settings to the template
+	nav_links = [
+		{"name": "Home", "href": "/"},
+		{"name": "Upload", "href": "/upload"},
+		{"name": "About", "href": "/about"},
+		{"name": "Resources", "href": "/resources"}
+	]
+	accessibility = {"font_size": "medium", "contrast": "dark"}
+	return templates.TemplateResponse("index.html", {
+		"request": request,
+		"title": "nasaSpaceChallenge",
+		"nav_links": nav_links,
+		"accessibility": accessibility
+	})
 
 @app.get("/search", response_class=JSONResponse)
 def search(term: str = Query(..., alias="query", min_length=1, description="Search query string")) -> List[Dict[str, Any]]:

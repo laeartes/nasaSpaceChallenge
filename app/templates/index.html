@@ -4,18 +4,31 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <input type="text" id="searchInput" placeholder="Type what you want to find...">
-    <button onclick="runSearch()" id="searchButton">Search</button>
+<body class="{{ accessibility.contrast }}-mode {{ 'font-' + accessibility.font_size }}">
+    <header role="banner" aria-label="Main header" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <h1 style="margin:0;font-size:1.4rem;">{{ title }}</h1>
+        <nav role="navigation" aria-label="Primary navigation" style="margin-left:12px;">
+            {% for link in nav_links %}
+                <a href="{{ link.href }}" style="margin-right:10px;">{{ link.name }}</a>
+            {% endfor %}
+        </nav>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <button id="themeToggle" onclick="toggleTheme()" aria-pressed="false">Switch theme</button>
+            <button onclick="decreaseText()" aria-label="Decrease text size">A-</button>
+            <button onclick="resetText()" aria-label="Reset text size">A</button>
+            <button onclick="increaseText()" aria-label="Increase text size">A+</button>
+        </div>
+    </header>
 
-    <div id="results">
-        <!-- Search results will be displayed here it should call event -->
-    </div>
+    <main role="main">
+        <label for="searchInput" class="sr-only">Search</label>
+        <input type="text" id="searchInput" placeholder="Type what you want to find..." aria-label="Search input">
+        <button onclick="runSearch()" id="searchButton">Search</button>
 
-    <!-- detail panel: shows specific section the user clicked -->
-    <div id="detailPanel" style="margin-top:20px; border-top:1px solid #444; padding-top:12px;">
-        <!-- filled by script when user selects a section -->
-    </div>
+        <section id="results" role="region" aria-live="polite" aria-label="Search results"></section>
+
+        <aside id="detailPanel" class="detail-panel" role="region" aria-label="Detail panel" tabindex="-1"></aside>
+    </main>
 
     <script src="/static/script.js"></script>
 </body>
