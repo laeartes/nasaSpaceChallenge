@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <input type="text" id="searchInput" placeholder="Type what you want to find...">
+    <button onclick="runSearch()" id="searchButton">Search</button>
+
+    <div id="results">
+        <!-- Search results will be displayed here it should call event -->
+    </div>
+
+    <!-- detail panel: shows specific section the user clicked -->
+    <div id="detailPanel" style="margin-top:20px; border-top:1px solid #444; padding-top:12px;">
+        <!-- filled by script when user selects a section -->
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

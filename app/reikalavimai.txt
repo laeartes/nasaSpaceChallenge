@@ -1,0 +1,22 @@
+grazus
+headeris - style bootstrap
+bus search funkcija
+ji pasirenka straipsni, ir pasirenki ka nori jame matyti
+auto updeitas
+
+
+
+jsono struktura
+
+name:
+link:
+sections:
+
+
+
+
+pavyzdys
+As noriu pelyciu kraujo kuneliu kosmose
+man nurodo:
+1. straipsnius, susijusius straipsnius
+2. galiu pasirinkti kuria straipsnio dali 
