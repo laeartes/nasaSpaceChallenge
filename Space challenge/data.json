@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Galaxy Explorer",
+        "link": "https://example.com/galaxy-explorer",
+        "sectionNames": ["Overview", "Specifications", "Mission Status"],
+        "sections": {
+            "Overview": "A satellite designed to explore distant galaxies.",
+            "Specifications": "Weight: 1200kg, Power: 5kW, Orbit: Geostationary",
+            "Mission Status": "Active since 2023-01-15"
+        }
+    },
+    {
+        "name": "Lunar Rover",
+        "link": "https://example.com/lunar-rover",
+        "sectionNames": ["Overview", "Specifications", "Mission Status"],
+        "sections": {
+            "Overview": "A rover designed to explore the surface of the Moon.",
+            "Specifications": "Weight: 300kg, Power: Solar, Speed: 10km/h",
+            "Mission Status": "Operational since 2022-11-05"
+        }
+    },
+    {
+        "name": "Mars Observer",
+        "link": "https://example.com/mars-observer",
+        "sectionNames": ["Overview", "Specifications", "Mission Status"],
+        "sections": {
+            "Overview": "An orbiter designed to study the surface and atmosphere of Mars.",
+            "Specifications": "Weight: 900kg, Power: 3kW, Orbit: Polar",
+            "Mission Status": "Inactive since 2021-06-20"
+        }
+    },
+    {
+        "name": "Asteroid Tracker",
+        "link": "https://example.com/asteroid-tracker",
+        "sectionNames": ["Overview", "Specifications", "Mission Status"],
+        "sections": {
+            "Overview": "A probe designed to track and study asteroids.",
+            "Specifications": "Weight: 500kg, Power: 2kW, Range: 1AU",
+            "Mission Status": "Active since 2020-09-12"
+        }
+    },
+    {
+        "name": "Hubble Space Telescope",
+        "link": "https://example.com/hubble-telescope",
+        "sectionNames": ["Overview", "Specifications", "Mission Status"],
+        "sections": {
+            "Overview": "A space telescope designed to capture high-resolution images of space.",
+            "Specifications": "Weight: 11,110kg, Power: 2.8kW, Orbit: Low Earth Orbit",
+            "Mission Status": "Active since 1990-04-24"
+        }
+    }
+]
