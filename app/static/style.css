@@ -248,7 +248,13 @@ label {
     padding: 0; /* Reset any padding */
 }
 
-
+mark.hl {
+    background: linear-gradient(90deg, #ffda6b, #ffc447);
+    color: #000;
+    padding: 0 0.15em;
+    border-radius: 0.25em;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+}
 
 /* small screens */
 @media (max-width: 600px) {

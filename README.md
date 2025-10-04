@@ -3,99 +3,67 @@
 This repository contains the project created by Vytautė, Žygis, Jokūbas, and Mykolas for the NASA Space App Challenge Hackathon.
 
 ## About the Project
-
-Our project was developed as part of the NASA Space App Challenge, focusing on solving real-world problems using space-related data and technology. Specifically, we are participating in the **[Build a Space Biology Knowledge Engine](https://www.spaceappschallenge.org/2025/challenges/build-a-space-biology-knowledge-engine/?tab=details)** challenge. 
-
-This challenge aims to create a knowledge engine that organizes and makes space biology data accessible, enabling researchers and enthusiasts to explore and understand the effects of space on biological systems.
+Our project targets the **Build a Space Biology Knowledge Engine** challenge. It aims to organize space biology data so researchers and enthusiasts can explore effects of space conditions on biological systems.
 
 ## What the Code Does
+The code provides:
+- Scraping & processing of space biology data (data consolidated into a JSON knowledge base).
+- An interactive FastAPI web application for searching structured sections.
+- Query and filtering endpoints for quick information retrieval (/search, /ask).
+- Integrated local LLM question answering (retrieval augmented) using Ollama + llama3.
 
-The code in this repository is designed to:
-- Scrape and process space biology data from various sources.
-- Provide an interactive web application for users to explore and analyze the data.
-- Enable visualization of relationships between biological experiments, genes, and the effects of space conditions like microgravity and radiation.
-- Support querying and filtering of data to help researchers find relevant information quickly.
+(Visualization of relationship graphs was removed from scope in this version.)
 
-## How to Install and Run the Project
+## Installation & Running
+1. Clone the repository
+```
+git clone <repository-url>
+cd nasaSpaceChallenge
+```
+2. Install Python dependencies
+```
+pip install -r requirements.txt
+```
+3. (Optional but recommended) Install Ollama and pull the model before first run (see next section). If you skip, the app will still try to use a local Ollama service on default port.
+4. Run the application 
 
-Follow these steps to set up and run the project:
+```
+cd nasaSpaceChallenge && python -m uvicorn app:app --reload
+```
+App runs at: http://127.0.0.1:8000
 
-1. **Clone the Repository**
-   ```bash
-   git clone <repository-url>
-   cd nasaSpaceChallenge
-   ```
+## Ollama Setup (Local LLM Backend)
+Install Ollama (choose your platform):
+- macOS (Homebrew): `brew install ollama`
+- macOS/Linux (script): `curl -fsSL https://ollama.com/install.sh | sh`
+- Windows: Download installer from https://ollama.com OR `winget install Ollama.Ollama`
 
-2. **Install Dependencies**
-   Make sure you have Python installed. Then, install the required dependencies using pip:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Application**
-   Start the FastAPI application using Uvicorn:
-   ```bash
-   python -m uvicorn app:app --reload
-   ```
-   The application will be available at `http://127.0.0.1:8000`.
-
-4. **(Optional) Set Up the Local LLM (Llama via Ollama)**
-   If you want LLM-powered features (e.g., natural language querying or summarization), follow the section below.
-
-## LLM Setup (Llama via Ollama)
-
-Ollama lets you run the `llama3` model locally for LLM-powered features.
-
-### 1. Install Ollama
-Download and install for your OS: https://ollama.com/download
-(The Ollama service will run in the background.)
-
-### 2. Pull the Llama 3 Model
-```bash
+After installation, start (if not auto-started) and pull the llama3 model:
+```
+ollama serve   # may already be running as a background service
 ollama pull llama3
 ```
-List installed models:
-```bash
-ollama list
-```
+You can substitute another compatible model; ensure it is pulled before use to avoid first-request delays.
 
-### 3. Test the Model
-```bash
-ollama run llama3 "Hello from space biology"
-```
-Stop with Ctrl+C.
+## Using the App
+- Navigate to `/` for the main interface.
+- Use `/search?query=...` for structured substring/word search.
+- Use `/ask?query=...` for retrieval-augmented LLM answers referencing the ingested dataset.
 
-### 4. (Optional) Remote Host
-If Ollama runs elsewhere:
-```bash
-export OLLAMA_HOST=http://remote-host:11434
-# Windows PowerShell
-$Env:OLLAMA_HOST = "http://remote-host:11434"
-```
-
-### 5. Update / Remove the Model
-```bash
-ollama pull llama3:latest   # update
-ollama rm llama3            # remove
-```
-
-### 6. Troubleshooting
-- Connection errors: ensure Ollama service is running.
-- Slow / OOM: use a smaller variant if available.
-- Port issues: change service port and set OLLAMA_HOST.
+## Troubleshooting
+- Model download delay: run `ollama pull llama3` ahead of time.
+- Ollama not reachable: ensure it listens on 127.0.0.1:11434 (default) and not blocked by firewall.
+- Memory issues: pull and switch to a smaller model variant.
 
 ## Team Members
-
 - Vytautė
 - Žygis
 - Jokūbas
 - Mykolas
 
 ## License
-
-This project is open-source and available under the [MIT License](LICENSE).
+This project is open-source and available under the MIT License.
 
 ---
-
-*Created during the NASA Space App Challenge Hackathon.*
+Created during the NASA Space App Challenge Hackathon.
 

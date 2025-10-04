@@ -6,8 +6,132 @@ import os
 import json
 import logging
 from typing import List, Dict, Any
+import subprocess
+import time
+import socket
+from threading import Thread
+import http.client
 
 app = FastAPI()
+
+# --- Ollama auto-start logic ---
+_ollama_process = None
+_ollama_started_here = False
+
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "127.0.0.1")
+OLLAMA_PORT = int(os.environ.get("OLLAMA_PORT", "11434"))
+OLLAMA_AUTOSTART = os.environ.get("OLLAMA_AUTOSTART", "1") not in ("0", "false", "False")
+OLLAMA_COMMAND = os.environ.get("OLLAMA_COMMAND", "ollama serve")
+OLLAMA_START_TIMEOUT = float(os.environ.get("OLLAMA_START_TIMEOUT", "60"))
+OLLAMA_LAZY_RETRY = os.environ.get("OLLAMA_LAZY_RETRY", "1") not in ("0", "false", "False")
+
+logger = logging.getLogger("nasaSpaceChallenge")  # ensure logger exists early
+
+def _is_port_open(host: str, port: int, timeout: float = 0.5) -> bool:
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+def _ollama_healthcheck(timeout: float = 0.75) -> bool:
+    try:
+        conn = http.client.HTTPConnection(OLLAMA_HOST, OLLAMA_PORT, timeout=timeout)
+        conn.request("GET", "/api/version")
+        resp = conn.getresponse()
+        ok = 200 <= resp.status < 300
+        conn.close()
+        return ok
+    except Exception:
+        return False
+
+def _ollama_ready() -> bool:
+    return _ollama_healthcheck()
+
+def _log_process_pipes(proc: subprocess.Popen, prefix: str):
+    def _reader(stream, level):
+        if not stream:
+            return
+        for line in iter(stream.readline, b""):
+            if not line:
+                break
+            try:
+                logger.log(level, "%s%s", prefix, line.decode(errors="ignore").rstrip())
+            except Exception:
+                pass
+    Thread(target=_reader, args=(proc.stdout, logging.INFO), daemon=True).start()
+    Thread(target=_reader, args=(proc.stderr, logging.WARNING), daemon=True).start()
+
+def _start_ollama_background(block: bool = False):
+    global _ollama_process, _ollama_started_here
+    if _ollama_ready():
+        logger.info("Ollama already responsive at %s:%s", OLLAMA_HOST, OLLAMA_PORT)
+        return True
+    try:
+        logger.info("Starting Ollama server with command: %s", OLLAMA_COMMAND)
+        if os.name == 'nt':
+            _ollama_process = subprocess.Popen(OLLAMA_COMMAND, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        else:
+            # split only when not using shell
+            parts = OLLAMA_COMMAND if isinstance(OLLAMA_COMMAND, list) else OLLAMA_COMMAND.split()
+            _ollama_process = subprocess.Popen(parts, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _ollama_started_here = True
+        _log_process_pipes(_ollama_process, "[ollama] ")
+    except FileNotFoundError:
+        logger.error("Ollama command not found. Set OLLAMA_COMMAND env var to full path, e.g. C:/Users/<user>/AppData/Local/Programs/Ollama/ollama.exe serve")
+        return False
+    except Exception as e:
+        logger.error("Failed to launch Ollama: %s", e)
+        return False
+
+    if not block:
+        # background wait thread just logs readiness
+        def _wait():
+            deadline = time.time() + OLLAMA_START_TIMEOUT
+            while time.time() < deadline:
+                if _ollama_ready():
+                    logger.info("Ollama became ready.")
+                    return
+                time.sleep(0.5)
+            logger.warning("Ollama did not become ready within %.1fs (non-blocking)", OLLAMA_START_TIMEOUT)
+        Thread(target=_wait, daemon=True).start()
+        return True
+
+    # blocking wait
+    deadline = time.time() + OLLAMA_START_TIMEOUT
+    while time.time() < deadline:
+        if _ollama_ready():
+            logger.info("Ollama ready (blocking wait).")
+            return True
+        # process crashed?
+        if _ollama_process and _ollama_process.poll() is not None:
+            logger.error("Ollama process exited early with code %s", _ollama_process.returncode)
+            return False
+        time.sleep(0.5)
+    logger.warning("Ollama did not become ready within %.1fs (blocking)", OLLAMA_START_TIMEOUT)
+    return False
+
+@app.on_event("startup")
+async def ensure_ollama_running():
+    if not OLLAMA_AUTOSTART:
+        logger.info("OLLAMA_AUTOSTART disabled; expecting external Ollama server.")
+        return
+    Thread(target=_start_ollama_background, kwargs={"block": False}, daemon=True).start()
+
+@app.on_event("shutdown")
+async def stop_local_ollama():
+    global _ollama_process
+    if _ollama_process and _ollama_started_here:
+        try:
+            logger.info("Terminating Ollama process started by this app...")
+            _ollama_process.terminate()
+            try:
+                _ollama_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                logger.info("Ollama did not exit gracefully; killing...")
+                _ollama_process.kill()
+        except Exception as e:
+            logger.warning("Error stopping Ollama: %s", e)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -183,14 +307,6 @@ def search(term: str = Query(..., alias="query", min_length=1, description="Sear
     except Exception as e:
         logger.exception("Unexpected error during search")
         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
-        combined.append(it)
-        return combined
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.exception("Unexpected error during search")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
-    
 
 from langchain_community.vectorstores import Chroma
 from langchain_community.docstore.document import Document
@@ -199,16 +315,26 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
 from langchain.prompts import PromptTemplate
 
+def sanitize_answer(text: str) -> str:
+    if not isinstance(text, str):
+        return text
+    sanitized = text.replace("**", "")
+    return sanitized
+
 # Scholarly default prompt template to enforce academic, truthful tone
 ACADEMIC_PROMPT = PromptTemplate(
     input_variables=["context", "question"],
     template=(
         "You are an academic research assistant for space biology researchers, scholars, and university-level students. "
-        "Respond in a precise, formal, scholarly register without condescension. Be truthful; do NOT fabricate. If the context "
-        "does not contain the answer, explicitly state that and suggest what additional data would help.\n\n"
-        "Cite supporting context by using (Source: <title>) where <title> is the metadata title of a document when relevant. "
-        "Do not invent sources. Limit speculative language.\n\n"
-        "Context:\n{context}\n\nQuestion: {question}\n\nScholarly Answer:" )
+        "Respond in a precise, formal, scholarly register without condescension. Be truthful; do NOT fabricate. "
+        "Output MUST be plain text only: absolutely NO markdown, NO bold, NO italics, NO asterisks (*), NO code fences, "
+        "and NO decorative symbols. Do not surround headings or phrases with ** or *. Do not introduce bullet points unless the "
+        "exact bullet characters already appear verbatim in the provided context; otherwise write in sentences. "
+        "If the context does not contain the answer, explicitly state that and suggest what additional data would help.\n\n"
+        "When citing supporting context, use the format (Source: <title>) where <title> is the metadata title of a document. "
+        "Do not invent or speculate beyond the given context; minimize speculative language.\n\n"
+        "Context:\n{context}\n\nQuestion: {question}\n\nScholarly Answer:"
+    )
 )
 
 @app.get("/ask", response_class=JSONResponse)
@@ -245,6 +371,16 @@ def ask_question(query: str = Query(..., description="Ask a question about the r
     embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     db = Chroma.from_documents(docs, embedding_function)
 
+    # Ensure Ollama is running (retry lazily if initial startup failed)
+    if not _ollama_ready():
+        if OLLAMA_AUTOSTART and OLLAMA_LAZY_RETRY:
+            logger.info("Ollama not ready at query time; attempting blocking start now...")
+            ok = _start_ollama_background(block=True)
+            if not ok or not _ollama_ready():
+                raise HTTPException(status_code=503, detail="Ollama backend not available after retry.")
+        else:
+            raise HTTPException(status_code=503, detail="Ollama backend not reachable.")
+
     # LLM
     llm = OllamaLLM(model="llama3", base_url="http://127.0.0.1:11434", temperature=0)
 
@@ -260,6 +396,7 @@ def ask_question(query: str = Query(..., description="Ask a question about the r
     try:
         result = qa({"query": query})
         answer = result.get("result", "")
+        answer = sanitize_answer(answer)
         sources = [
             {"title": d.metadata.get("title", "Unknown"), "link": d.metadata.get("link", "")}
             for d in result.get("source_documents", [])

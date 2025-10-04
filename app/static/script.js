@@ -5,6 +5,12 @@ function runSearch() {
         document.getElementById('results').innerText = "Please enter a search term.";
         return;
     }
+    // store current search configuration globally for highlighting later
+    window.__searchConfig = {
+        term: term,
+        words: term.split(/\s+/).filter(Boolean),
+        exact: exactOnly
+    };
     document.getElementById('results').innerText = "Searching...";
     document.getElementById('detailPanel').innerHTML = "";
     const exactParam = exactOnly ? "&exact=1" : "";
@@ -113,6 +119,33 @@ function slugify(input) {
         .replace(/-+/g, "-");         // collapse dashes
 }
 
+// Highlight helpers
+function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+}
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function highlightText(raw, cfg) {
+    if (!raw || !cfg || !cfg.term) return escapeHTML(raw || "");
+    const safe = escapeHTML(raw);
+    if (cfg.exact) {
+        const pattern = escapeRegExp(cfg.term);
+        if (!pattern) return safe;
+        const re = new RegExp(pattern, 'gi');
+        return safe.replace(re, m => `<mark class="hl">${m}</mark>`);
+    } else {
+        const words = (cfg.words || []).filter(Boolean);
+        if (!words.length) return safe;
+        // unique, sort by length desc to avoid partial overshadowing
+        const uniq = Array.from(new Set(words.map(w => w.toLowerCase()))).sort((a,b)=>b.length - a.length);
+        const pattern = uniq.map(escapeRegExp).join('|');
+        if (!pattern) return safe;
+        const re = new RegExp(pattern, 'gi');
+        return safe.replace(re, m => `<mark class="hl">${m}</mark>`);
+    }
+}
+
 function showSection(article, sec) {
     const panel = document.getElementById('detailPanel');
     panel.innerHTML = "";
@@ -134,8 +167,11 @@ function showSection(article, sec) {
     sectionTitle.innerText = (sec.title ? sec.title : (sec.type || "section"));
     wrapper.appendChild(sectionTitle);
 
-    const content = document.createElement('p');
-    content.innerText = (sec.content !== undefined && sec.content !== null && sec.content !== "") ? sec.content : (sec.excerpt || "");
+    const content = document.createElement('div');
+    content.className = 'section-content';
+    const rawText = (sec.content !== undefined && sec.content !== null && sec.content !== "") ? sec.content : (sec.excerpt || "");
+    const cfg = window.__searchConfig || null;
+    content.innerHTML = highlightText(rawText, cfg);
     wrapper.appendChild(content);
 
     const openBtn = document.createElement('button');

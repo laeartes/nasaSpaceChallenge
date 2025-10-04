@@ -1,0 +1,97 @@
+# ---- Python bytecode & caches ----
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ---- Virtual environments ----
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ---- Environment & secrets ----
+.env
+.env.*
+*.secret
+*.pem
+
+# ---- Packaging / build artifacts ----
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+wheelhouse/
+
+# ---- Testing & coverage ----
+.pytest_cache/
+.coverage*
+htmlcov/
+.tox/
+.nox/
+
+# ---- Type checking / lint caches ----
+.mypy_cache/
+.pyre/
+.dmypy.json
+.pytype/
+ruff_cache/
+
+# ---- Notebooks ----
+*.ipynb_checkpoints
+
+# ---- Logs & debug ----
+logs/
+*.log
+*.out
+*.err
+
+# ---- Tooling / editors ----
+.vscode/
+.idea/
+*.swp
+*~
+.project
+.pydevproject
+
+# ---- Node / frontend (if added later) ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ---- OS / misc ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Caches ----
+.cache/
+__pypackages__/
+
+# ---- Optional: large or generated data outputs (uncomment as needed) ----
+# data/
+# *.sqlite
+# *.sqlite3
+# Space challenge/data.json
+
+# ---- Coverage reports / reports ----
+coverage.xml
+pytestdebug.log
+
+# ---- FastAPI / Uvicorn reload artifacts ----
+.reload*
+
+# ---- Local Ollama model pulls (if any custom dumps) ----
+# ollama_models/
+
+# ---- Temporary files ----
+*.tmp
+*.temp
+*.bak
+
+# ---- Lock files (uncomment if you do not want to commit) ----
+# Pipfile.lock
+# poetry.lock
