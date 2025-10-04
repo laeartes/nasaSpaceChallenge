@@ -28,7 +28,7 @@ pip install -r requirements.txt
 4. Run the application 
 
 ```
-cd nasaSpaceChallenge && python -m uvicorn app:app --reload
+cd nasaSpaceChallenge/app && python -m uvicorn app:app --reload
 ```
 App runs at: http://127.0.0.1:8000
 
@@ -47,8 +47,7 @@ You can substitute another compatible model; ensure it is pulled before use to a
 
 ## Using the App
 - Navigate to `/` for the main interface.
-- Use `/search?query=...` for structured substring/word search.
-- Use `/ask?query=...` for retrieval-augmented LLM answers referencing the ingested dataset.
+
 
 ## Troubleshooting
 - Model download delay: run `ollama pull llama3` ahead of time.
