@@ -15,4 +15,3 @@ AI modelis, kuris prognozuoja žmogaus sveikatos rizikas (pvz. kaulų nykimą, i
 Sistema, kuri naudoja kosmoso biologijos duomenis, kad optimizuotų augalų pasirinkimą kosminėms misijoms (kurie augalai geriausiai auga, turi didžiausią maistinę vertę ir atsparumą).
 8. MicroCosmos DB
 Specializuota duomenų bazė apie mikroorganizmus kosmose: jų mutacijas, atsparumą, naudą (pvz. fermentacija, atliekų perdirbimas). Su paprasta paieška ir filtravimu.
-man rodos Mykolas gėjūs
