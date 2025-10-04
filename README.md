@@ -17,7 +17,7 @@ The code provides:
 ## Installation & Running
 1. Clone the repository
 ```
-git clone <repository-url>
+git clone https://github.com/laeartes/nasaSpaceChallenge.git
 cd nasaSpaceChallenge
 ```
 2. Install Python dependencies
@@ -37,13 +37,6 @@ Install Ollama (choose your platform):
 - macOS (Homebrew): `brew install ollama`
 - macOS/Linux (script): `curl -fsSL https://ollama.com/install.sh | sh`
 - Windows: Download installer from https://ollama.com OR `winget install Ollama.Ollama`
-
-After installation, start (if not auto-started) and pull the llama3 model:
-```
-ollama serve   # may already be running as a background service
-ollama pull llama3
-```
-You can substitute another compatible model; ensure it is pulled before use to avoid first-request delays.
 
 ## Using the App
 - Navigate to `/` for the main interface.
