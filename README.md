@@ -28,7 +28,7 @@ pip install -r requirements.txt
 4. Run the application 
 
 ```
-cd nasaSpaceChallenge/app && python -m uvicorn app:app --reload
+cd app && python -m uvicorn app:app --reload
 ```
 App runs at: http://127.0.0.1:8000
 
