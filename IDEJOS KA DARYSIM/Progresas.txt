@@ -4,4 +4,13 @@ raw data - svarbiausi (svarbiau negu straipsniai). Nes visi duomenys neišnaudot
 Pagrindinė auditorija - mokslininkai
 Naudojam: GeneLab duomenis, raw data, 608 straipsniai, + jei įmanoma (neįmanoma tikriausiai bet ždž) (general duombazės); HRP human resources program
 SVARBU: Galimybė pasirinkti ar žiūrim tik conclusionus, abstraktus ir t. t.
-AUto updatas, kai 
+AUto updatas, kai yra įkeliami nauji straipsniai.
+
+STRAIPSNIŲ DALIS:
+Daro Žygis ir Jokūbas
+
+RAW DALIS:
+
+PATEIKIMAS:
+Svetainė - Mykolas
+NLP - Mykolas?
