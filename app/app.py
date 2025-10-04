@@ -197,9 +197,19 @@ from langchain_community.docstore.document import Document
 from langchain.chains import RetrievalQA
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
+from langchain.prompts import PromptTemplate
 
-
-
+# Scholarly default prompt template to enforce academic, truthful tone
+ACADEMIC_PROMPT = PromptTemplate(
+    input_variables=["context", "question"],
+    template=(
+        "You are an academic research assistant for space biology researchers, scholars, and university-level students. "
+        "Respond in a precise, formal, scholarly register without condescension. Be truthful; do NOT fabricate. If the context "
+        "does not contain the answer, explicitly state that and suggest what additional data would help.\n\n"
+        "Cite supporting context by using (Source: <title>) where <title> is the metadata title of a document when relevant. "
+        "Do not invent sources. Limit speculative language.\n\n"
+        "Context:\n{context}\n\nQuestion: {question}\n\nScholarly Answer:" )
+)
 
 @app.get("/ask", response_class=JSONResponse)
 def ask_question(query: str = Query(..., description="Ask a question about the research data")):
@@ -216,32 +226,45 @@ def ask_question(query: str = Query(..., description="Ask a question about the r
     for entry in data:
         name = entry.get("name", "Untitled")
         sections = entry.get("sections", {})
+        # Normalize sections if they might be a list form
+        if isinstance(sections, list):
+            normalized = {}
+            for idx, sec in enumerate(sections):
+                if isinstance(sec, dict):
+                    title = sec.get("title") or sec.get("name") or f"section_{idx}"
+                    body = sec.get("text") or sec.get("body") or ""
+                    normalized[title] = body
+            sections = normalized
+        if not isinstance(sections, dict):
+            sections = {}
         text_parts = [f"{sec_name}: {sec_content}" for sec_name, sec_content in sections.items()]
         full_text = "\n".join(text_parts)
         docs.append(Document(page_content=full_text, metadata={"title": name, "link": entry.get("link", "")}))
 
-    # Use a local embedding model
+    # Embeddings & Vector Store
     embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     db = Chroma.from_documents(docs, embedding_function)
+
+    # LLM
     llm = OllamaLLM(model="llama3", base_url="http://127.0.0.1:11434", temperature=0)
 
-    # Set up the RetrievalQA chain
+    # RetrievalQA with academic prompt
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
         retriever=db.as_retriever(search_kwargs={"k": 3}),
         return_source_documents=True,
+        chain_type_kwargs={"prompt": ACADEMIC_PROMPT},  # inject scholarly instructions
     )
 
-    # Run the QA chain
     try:
         result = qa({"query": query})
-        answer = result["result"]
+        answer = result.get("result", "")
         sources = [
             {"title": d.metadata.get("title", "Unknown"), "link": d.metadata.get("link", "")}
-            for d in result.get("source_documents", [])]
+            for d in result.get("source_documents", [])
+        ]
         return {"answer": answer, "sources": sources}
-
     except Exception as e:
         logger.exception("Error running QA chain")
         raise HTTPException(status_code=500, detail=f"Error answering question: {e}")
