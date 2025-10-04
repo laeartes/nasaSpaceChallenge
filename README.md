@@ -39,6 +39,50 @@ Follow these steps to set up and run the project:
    ```
    The application will be available at `http://127.0.0.1:8000`.
 
+4. **(Optional) Set Up the Local LLM (Llama via Ollama)**
+   If you want LLM-powered features (e.g., natural language querying or summarization), follow the section below.
+
+## LLM Setup (Llama via Ollama)
+
+Ollama lets you run the `llama3` model locally for LLM-powered features.
+
+### 1. Install Ollama
+Download and install for your OS: https://ollama.com/download
+(The Ollama service will run in the background.)
+
+### 2. Pull the Llama 3 Model
+```bash
+ollama pull llama3
+```
+List installed models:
+```bash
+ollama list
+```
+
+### 3. Test the Model
+```bash
+ollama run llama3 "Hello from space biology"
+```
+Stop with Ctrl+C.
+
+### 4. (Optional) Remote Host
+If Ollama runs elsewhere:
+```bash
+export OLLAMA_HOST=http://remote-host:11434
+# Windows PowerShell
+$Env:OLLAMA_HOST = "http://remote-host:11434"
+```
+
+### 5. Update / Remove the Model
+```bash
+ollama pull llama3:latest   # update
+ollama rm llama3            # remove
+```
+
+### 6. Troubleshooting
+- Connection errors: ensure Ollama service is running.
+- Slow / OOM: use a smaller variant if available.
+- Port issues: change service port and set OLLAMA_HOST.
 
 ## Team Members
 
