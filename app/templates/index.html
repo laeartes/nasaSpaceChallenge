@@ -4,7 +4,7 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body class="{{ accessibility.contrast }}-mode {{ 'font-' + accessibility.font_size }}">
+<body class="dark-mode {{ 'font-' + accessibility.font_size }}">
     <header role="banner" aria-label="Main header" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
         <h1 style="margin:0;font-size:1.4rem;">{{ title }}</h1>
         <nav role="navigation" aria-label="Primary navigation" style="margin-left:12px;">
@@ -13,7 +13,6 @@
             {% endfor %}
         </nav>
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-            <button id="themeToggle" onclick="toggleTheme()" aria-pressed="false">Switch theme</button>
             <button onclick="decreaseText()" aria-label="Decrease text size">A-</button>
             <button onclick="resetText()" aria-label="Reset text size">A</button>
             <button onclick="increaseText()" aria-label="Increase text size">A+</button>
@@ -37,6 +36,7 @@
 
     <script src="/static/script.js"></script>
 </body>
+</html>
 </html>
     <script src="/static/script.js"></script>
 </body>
