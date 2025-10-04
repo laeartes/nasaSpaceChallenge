@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Page</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        async function submitQuery(event) {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+
+            resultDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+
+            try {
+                const response = await fetch(`/ask?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                loadingDiv.style.display = 'none';
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div style='background: #1e1e1e; padding: 10px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'>
+                        <h3>Answer:</h3><p>${data.answer}</p>`;
+                    if (data.sources.length > 0) {
+                        resultDiv.innerHTML += '<h4>Sources:</h4><ul>' + data.sources.map(source => `<li><a href="${source.link}" target="_blank">${source.title}</a></li>`).join('') + '</ul>';
+                    }
+                    resultDiv.innerHTML += '</div>';
+                } else {
+                    resultDiv.innerHTML = `<p>Error: ${data.detail}</p>`;
+                }
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        function applyFontSize(name) {
+            const map = { small: '14px', medium: '16px', large: '18px', xlarge: '20px' };
+            const size = map[name] || map['medium'];
+            document.documentElement.style.fontSize = size;
+            localStorage.setItem('fontSize', name);
+        }
+
+        function increaseText() {
+            const sizes = ['small', 'medium', 'large', 'xlarge'];
+            const current = localStorage.getItem('fontSize') || 'medium';
+            const idx = sizes.indexOf(current);
+            const next = sizes[Math.min(sizes.length - 1, idx + 1)];
+            applyFontSize(next);
+        }
+
+        function decreaseText() {
+            const sizes = ['small', 'medium', 'large', 'xlarge'];
+            const current = localStorage.getItem('fontSize') || 'medium';
+            const idx = sizes.indexOf(current);
+            const prev = sizes[Math.max(0, idx - 1)];
+            applyFontSize(prev);
+        }
+
+        function resetText() {
+            applyFontSize('medium');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedFont = localStorage.getItem('fontSize') || 'medium';
+            applyFontSize(savedFont);
+        });
+    </script>
+    <style>
+        :root {
+            --bg: #000;
+            --text: #fff;
+            --muted: #9aa3ad;
+            --input-bg: #111;
+            --border: #333;
+            --accent: #2aa1ff;
+            --accent-contrast: #000;
+            --btn-radius: 0.5rem;
+            --gap: 0.625rem;
+            --base-size: 16px;
+        }
+
+        body.dark-mode {
+            --bg: #000;
+            --text: #fff;
+            --muted: #ccc;
+            --input-bg: #111;
+            --border: #333;
+            --accent: #2aa1ff;
+            --accent-contrast: #000;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        input {
+            background-color: var(--input-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        button {
+            background-color: var(--accent);
+            color: var(--accent-contrast);
+        }
+
+        button:hover {
+            background-color: #1558b3;
+        }
+    </style>
+</head>
+<body class="dark-mode {{ 'font-' + accessibility.font_size }}">
+    <header role="banner" aria-label="Main header" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <h1 style="margin:0;font-size:1.4rem;">{{ title }}</h1>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <button onclick="decreaseText()" aria-label="Decrease text size">A-</button>
+            <button onclick="resetText()" aria-label="Reset text size">A</button>
+            <button onclick="increaseText()" aria-label="Increase text size">A+</button>
+        </div>
+    </header>
+    <h1>Ask the AI</h1>
+    <form onsubmit="submitQuery(event)">
+        <input type="text" id="query" name="query" placeholder="Enter your query here" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="loading" style="display:none;">Loading...</div>
+    <div id="result"></div>
+    <footer>
+        <a href="/">Return to Home</a>
+    </footer>
+</body>
+</html>

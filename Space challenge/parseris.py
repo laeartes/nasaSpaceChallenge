@@ -13,7 +13,6 @@ from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 
-# locate files relative to this script
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 CSV_PATH = os.path.join(BASE_DIR, "SB_publication_PMC.csv")
 OUT_PATH = os.path.join(BASE_DIR, "data.json")
@@ -106,7 +105,6 @@ def main():
             try:
                 res = parsing(NAME, LINK)
                 results.append(res)
-                # small delay to be polite to servers
                 sleep(0.05)
             except Exception as e:
                 logging.exception("Failed to parse article %s: %s", NAME, e)

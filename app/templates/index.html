@@ -21,12 +21,12 @@
 
     <main role="main">
         <label for="searchInput" class="sr-only">Search</label>
-        <input type="text" id="searchInput" placeholder="Type what you want to find..." aria-label="Search input">
+        <input type="text" id="searchInput" placeholder="Search for articles..." aria-label="Search input">
         <button onclick="runSearch()" id="searchButton">Search</button>
-        <label style="margin-left:8px;">
-            <input type="checkbox" id="exactOnly"> Exact (case-insensitive)
+        <label style="display: flex; align-items: center; gap: 0; margin-left: 8px;">
+            <input type="checkbox" id="exactOnly"> 
+            <span>Exact match (case-insensitive)</span>
         </label>
-        <!-- min refs control removed; search focuses on matching only -->
         <div id="resultsSummary" aria-live="polite" style="margin-top:8px; font-size:0.95rem; color:var(--muted);"></div>
 
         <section id="results" role="region" aria-live="polite" aria-label="Search results"></section>
@@ -34,10 +34,10 @@
         <aside id="detailPanel" class="detail-panel" role="region" aria-label="Detail panel" tabindex="-1"></aside>
     </main>
 
-    <script src="/static/script.js"></script>
-</body>
-</html>
-</html>
+    <footer>
+        <a href="/">Return to Home</a>
+    </footer>
+
     <script src="/static/script.js"></script>
 </body>
 </html>

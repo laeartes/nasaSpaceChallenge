@@ -17,21 +17,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("nasaSpaceChallenge")
 
 @app.get("/", response_class=HTMLResponse)
-def read_root(request: Request):
-	# provide navigation links and default accessibility settings to the template
-	nav_links = [
-		{"name": "Home", "href": "/"},
-		{"name": "Upload", "href": "/upload"},
-		{"name": "About", "href": "/about"},
-		{"name": "Resources", "href": "/resources"}
-	]
-	accessibility = {"font_size": "medium", "contrast": "dark"}
-	return templates.TemplateResponse("index.html", {
-		"request": request,
-		"title": "nasaSpaceChallenge",
-		"nav_links": nav_links,
-		"accessibility": accessibility
-	})
+def homepage(request: Request):
+    return templates.TemplateResponse("main.html", {"request": request})
 
 @app.get("/search", response_class=JSONResponse)
 def search(term: str = Query(..., alias="query", min_length=1, description="Search query string"),
@@ -204,3 +191,70 @@ def search(term: str = Query(..., alias="query", min_length=1, description="Sear
         logger.exception("Unexpected error during search")
         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
     
+
+from langchain_community.vectorstores import Chroma
+from langchain_community.docstore.document import Document
+from langchain.chains import RetrievalQA
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaLLM
+
+
+
+
+@app.get("/ask", response_class=JSONResponse)
+def ask_question(query: str = Query(..., description="Ask a question about the research data")):
+    # Load the data file
+    data_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Space challenge", "data.json"))
+    if not os.path.exists(data_path):
+        raise HTTPException(status_code=500, detail=f"Data file not found: {data_path}")
+
+    with open(data_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Convert JSON entries to LangChain Documents
+    docs = []
+    for entry in data:
+        name = entry.get("name", "Untitled")
+        sections = entry.get("sections", {})
+        text_parts = [f"{sec_name}: {sec_content}" for sec_name, sec_content in sections.items()]
+        full_text = "\n".join(text_parts)
+        docs.append(Document(page_content=full_text, metadata={"title": name, "link": entry.get("link", "")}))
+
+    # Use a local embedding model
+    embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    db = Chroma.from_documents(docs, embedding_function)
+    llm = OllamaLLM(model="llama3", base_url="http://127.0.0.1:11434", temperature=0)
+
+    # Set up the RetrievalQA chain
+    qa = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=db.as_retriever(search_kwargs={"k": 3}),
+        return_source_documents=True,
+    )
+
+    # Run the QA chain
+    try:
+        result = qa({"query": query})
+        answer = result["result"]
+        sources = [
+            {"title": d.metadata.get("title", "Unknown"), "link": d.metadata.get("link", "")}
+            for d in result.get("source_documents", [])]
+        return {"answer": answer, "sources": sources}
+
+    except Exception as e:
+        logger.exception("Error running QA chain")
+        raise HTTPException(status_code=500, detail=f"Error answering question: {e}")
+
+@app.get("/ai", response_class=HTMLResponse)
+def ai_page(request: Request):
+    accessibility = {"font_size": "medium"}  # Default accessibility settings
+    return templates.TemplateResponse("AI.html", {"request": request, "accessibility": accessibility})
+
+@app.get("/index", response_class=HTMLResponse)
+def index_page(request: Request):
+    context = {
+        "request": request,
+        "accessibility": {"font_size": "medium"}  # Default value for accessibility
+    }
+    return templates.TemplateResponse("index.html", context)

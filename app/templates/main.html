@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NASA Space Challenge</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to NASA Space Challenge</h1>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <button onclick="decreaseText()" aria-label="Decrease text size">A-</button>
+            <button onclick="resetText()" aria-label="Reset text size">A</button>
+            <button onclick="increaseText()" aria-label="Increase text size">A+</button>
+        </div>
+    </header>
+    <main>
+        <p>Explore the universe with our tools and resources.</p>
+        <div style="display: flex; gap: 20px;">
+            <a href="/ai" class="button">Go to AI Page</a>
+            <a href="/index" class="button">Go to Search Page</a>
+        </div>
+    </main>
+    <script>
+        function applyFontSize(name) {
+            const map = { small: '14px', medium: '16px', large: '18px', xlarge: '20px' };
+            const size = map[name] || map['medium'];
+            document.documentElement.style.fontSize = size;
+            localStorage.setItem('fontSize', name);
+        }
+
+        function increaseText() {
+            const sizes = ['small', 'medium', 'large', 'xlarge'];
+            const current = localStorage.getItem('fontSize') || 'medium';
+            const idx = sizes.indexOf(current);
+            const next = sizes[Math.min(sizes.length - 1, idx + 1)];
+            applyFontSize(next);
+        }
+
+        function decreaseText() {
+            const sizes = ['small', 'medium', 'large', 'xlarge'];
+            const current = localStorage.getItem('fontSize') || 'medium';
+            const idx = sizes.indexOf(current);
+            const prev = sizes[Math.max(0, idx - 1)];
+            applyFontSize(prev);
+        }
+
+        function resetText() {
+            applyFontSize('medium');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedFont = localStorage.getItem('fontSize') || 'medium';
+            applyFontSize(savedFont);
+        });
+    </script>
+</body>
+</html>

@@ -1,10 +1,18 @@
 /* body style */
 body {
     font-family: Arial, sans-serif;
-    background-color: black;
-    color: white;
+    background-color: #121212; /* Darker background for better contrast */
+    color: #e0e0e0; /* Softer white for less strain */
+    margin: 0;
+    padding: 0;
 }
 
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2rem; /* Larger font size for better readability */
+    color: #ffffff; /* Ensure header text is prominent */
+}
 
 /* input field style */
 #searchInput 
@@ -12,10 +20,10 @@ body {
     width: 300px;
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #444;
+    border: 1px solid #555; /* Softer border color */
     border-radius: 4px;
-    background-color: #222;
-    color: white;
+    background-color: #1e1e1e; /* Darker input background */
+    color: #e0e0e0; /* Match text color with body */
     text-align: center;
 }
 
@@ -24,8 +32,8 @@ body {
 {
 
     padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
+    background-color: #1a73e8; /* Brighter blue for better visibility */
+    color: #ffffff; /* Ensure text is readable */
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -34,7 +42,7 @@ body {
 
 #searchButton:hover 
 {
-    background-color: #0056b3;
+    background-color: #1558b3; /* Darker hover effect */
 }
 
 :root {
@@ -85,7 +93,36 @@ body::before {
     mix-blend-mode: normal;
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
 
+label, input, button {
+    margin: 10px;
+}
+
+input {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #1a73e8; /* Brighter blue for better visibility */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1558b3; /* Darker hover effect */
+}
 
 html, body {
     height: 100%;
@@ -127,8 +164,8 @@ h1 { font-size: 1.4rem; margin: 0; }
 }
 
 button {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
+    padding: 0.75rem 1rem; /* Larger padding for better clickability */
+    border-radius: 0.5rem; /* Slightly more rounded corners */
     border: 0;
     cursor: pointer;
     transition: background-color 120ms ease, color 120ms ease, transform 80ms ease;
@@ -147,12 +184,14 @@ button {
 }
 
 a {
-    color: var(--accent);
+    color: #1a73e8; /* Match button color */
     text-decoration: none;
     font-size: 1rem;
+    font-weight: bold; /* Make links more noticeable */
 }
 
 a:hover {
+    color: #1558b3; /* Match button hover color */
     text-decoration: underline;
 }
 
@@ -171,6 +210,10 @@ li {
     border-top: 0.0625rem solid var(--border);
     padding-top: 0.75rem;
     color: var(--text);
+    background-color: #1e1e1e; /* Match input background */
+    border: 1px solid #333; /* Softer border */
+    padding: 1rem; /* Add padding for better spacing */
+    border-radius: 0.5rem; /* Rounded corners */
 }
 
 button.section-btn {
@@ -197,9 +240,19 @@ ul { padding-left: 0; }
 button { border-radius:0.375rem; }
 button[aria-pressed="true"] { box-shadow: 0 0 0 0.1875rem rgba(42,161,255,0.12); }
 
+label {
+    display: flex;
+    align-items: center;
+    gap: 0 !important; /* Ensure no gap between checkbox and span */
+    margin: 0; /* Reset any margin */
+    padding: 0; /* Reset any padding */
+}
+
+
+
 /* small screens */
 @media (max-width: 600px) {
-    #searchInput { width: 100%; margin-bottom:0.5rem; }
-    header { flex-direction: column; align-items:flex-start; gap:0.375rem; }
+    #searchInput { width: 100%; margin-bottom:1rem; /* Increase spacing below input */ }
+    header { flex-direction: column; align-items:flex-start; gap:0.5rem; /* Slightly larger gap for better spacing */ }
 }
 

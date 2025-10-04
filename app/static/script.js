@@ -1,7 +1,6 @@
 function runSearch() {
     const term = document.getElementById('searchInput').value.trim();
     const exactOnly = !!document.getElementById('exactOnly') && document.getElementById('exactOnly').checked;
-    // minRefs removed; search focuses on matches only
     if (!term) {
         document.getElementById('results').innerText = "Please enter a search term.";
         return;
@@ -30,7 +29,6 @@ function runSearch() {
                 if (summaryEl) summaryEl.innerText = "Found 0 articles.";
                 return;
             }
-            // summary: total articles and total matched sections
             const totalArticles = items.length;
             const totalMatchedSections = items.reduce((acc, it) => acc + (it.match_count || 0), 0);
             const summaryEl = document.getElementById('resultsSummary');
@@ -45,7 +43,6 @@ function runSearch() {
                 a.target = "_blank";
                 a.style.fontWeight = "600";
                 header.appendChild(a);
-                // small meta: matches and counts
                 const meta = document.createElement('span');
                 meta.style.marginLeft = "8px";
                 meta.style.fontSize = "0.95rem";
@@ -120,12 +117,10 @@ function showSection(article, sec) {
     const panel = document.getElementById('detailPanel');
     panel.innerHTML = "";
 
-    // create a stable id for this article+section so we can use #anchor-style navigation
     const base = (article && article.name) ? article.name : (article && article.link) ? article.link : "article";
     const titleText = sec && (sec.title || sec.type) ? (sec.title || sec.type) : "section";
     const id = "detail-" + slugify(base + "-" + titleText);
 
-    // wrapper with id so location.hash will jump to it
     const wrapper = document.createElement('div');
     wrapper.id = id;
     wrapper.setAttribute('data-article', base);
@@ -148,21 +143,17 @@ function showSection(article, sec) {
     openBtn.onclick = () => window.open(article.link || "#", "_blank");
     wrapper.appendChild(openBtn);
 
-    // replace "Select this section" with a "Scroll to top" button
     const upBtn = document.createElement('button');
     upBtn.innerText = "Scroll to top";
     upBtn.style.marginLeft = "8px";
     upBtn.onclick = () => {
         try {
-            // instant jump to top
             window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-            // set focus back to the detail panel for accessibility
             try {
                 panel.setAttribute('tabindex', '-1');
                 panel.focus({ preventScroll: true });
             } catch (e) {}
         } catch (e) {
-            // fail silently
             console.warn("Scroll to top failed", e);
         }
     };
@@ -170,7 +161,6 @@ function showSection(article, sec) {
 
     panel.appendChild(wrapper);
 
-    // emulate anchor behavior: set hash after element is in DOM so browser jumps to it
     try {
         const hash = "#" + id;
         setTimeout(() => {
@@ -185,7 +175,6 @@ function showSection(article, sec) {
     }
 }
 
-// font size helpers and preferences
 function applyFontSize(name) {
     const map = { small: '14px', medium: '16px', large: '18px', xlarge: '20px' };
     const size = map[name] || map['medium'];
