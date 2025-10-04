@@ -1,0 +1,27 @@
+Kaip atrodo?
+BŪTINAI ĮTRAUKIAM GOOGLE SCHOOLAR (608 straipsniai - nepakankama)
+raw data - svarbiausi (svarbiau negu straipsniai). Nes visi duomenys neišnaudoti. Darome pirmiau.
+Pagrindinė auditorija - mokslininkai
+Naudojam: GeneLab duomenis, raw data, 608 straipsniai, + jei įmanoma (neįmanoma tikriausiai bet ždž) (general duombazės); HRP human resources program
+SVARBU: Galimybė pasirinkti ar žiūrim tik conclusionus, abstraktus ir t. t.
+AUto updatas, kai yra įkeliami nauji straipsniai.
+
+STRAIPSNIŲ DALIS:
+Daro Žygis ir Jokūbas
+
+RAW DALIS:
+OSDR navigavimas
+| Data Type       | Description                                                                        |
+| --------------- | ---------------------------------------------------------------------------------- |
+| **Study**       | Complete scientific studies, possibly with raw and processed data.                 |
+| **Experiment**  | Specific experimental setups or protocols within or across studies.                |
+| **Subject**     | Biological subjects used (e.g. organisms, model systems like mice, yeast, plants). |
+| **Biospecimen** | Tissue, blood, or other biological samples collected.                              |
+| **Payload**     | Hardware or modules used to carry experiments.                                     |
+| **Mission**     | Space missions or flights linked to the data.                                      |
+| **Hardware**    | Specific instruments or equipment used.                                            |
+| **Vehicle**     | Spacecraft involved (e.g. ISS, SpaceX Dragon, etc.).                               |
+
+PATEIKIMAS:
+Svetainė - Mykolas
+NLP - Mykolas?
