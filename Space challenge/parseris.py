@@ -1,3 +1,6 @@
+# The main parser code (using beautifulsoup and other modules) were written without AI, however, to improve error catching Copilot was used
+# and to help with some technical difficulties ChatGPT was used 
+
 import os
 import csv
 import json

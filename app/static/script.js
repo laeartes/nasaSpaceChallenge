@@ -1,3 +1,5 @@
+//code regarding was written with the help of Copilot, the rest was not
+
 function runSearch() {
     const term = document.getElementById('searchInput').value.trim();
     const exactOnly = !!document.getElementById('exactOnly') && document.getElementById('exactOnly').checked;

@@ -1,3 +1,5 @@
+#Essentially all of the code with minor tweaks was written with Copilot
+
 from fastapi import FastAPI, Request, Query, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
