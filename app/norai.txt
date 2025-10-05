@@ -1,6 +1,0 @@
-pavadinimas
-linkus i kitas webappo vietas
-kad butu dar kazkas
-stilius grazesnis
-tekstas didesnis
-accessibility options
