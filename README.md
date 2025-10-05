@@ -37,7 +37,7 @@ Install Ollama (choose your platform):
 - macOS (Homebrew): `brew install ollama`
 - macOS/Linux (script): `curl -fsSL https://ollama.com/install.sh | sh`
 - Windows: Download installer from https://ollama.com OR `winget install Ollama.Ollama`
-Then in terminal: `ollama pull llama3`
+Then in a new terminal: `ollama pull llama3`
 ## Using the App
 - Navigate to `/` for the main interface.
 
