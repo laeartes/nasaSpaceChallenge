@@ -24,7 +24,7 @@ cd nasaSpaceChallenge
 ```
 pip install -r requirements.txt
 ```
-3. (Optional but recommended) Install Ollama and pull the model before first run (see next section). If you skip, the app will still try to use a local Ollama service on default port.
+3. Install Ollama and pull the model before first run (see next section). If you skip, the app will still try to use a local Ollama service on default port.
 4. Run the application 
 
 ```
