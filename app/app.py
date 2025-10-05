@@ -26,6 +26,9 @@ OLLAMA_AUTOSTART = os.environ.get("OLLAMA_AUTOSTART", "1") not in ("0", "false",
 OLLAMA_COMMAND = os.environ.get("OLLAMA_COMMAND", "ollama serve")
 OLLAMA_START_TIMEOUT = float(os.environ.get("OLLAMA_START_TIMEOUT", "60"))
 OLLAMA_LAZY_RETRY = os.environ.get("OLLAMA_LAZY_RETRY", "1") not in ("0", "false", "False")
+# Hardcoded CFG options (no env overrides)
+OLLAMA_CFG_NEGATIVE_PROMPT = "Write ethical, moral and legal responses only."
+OLLAMA_CFG_SCALE = 2.0
 
 logger = logging.getLogger("nasaSpaceChallenge")  # ensure logger exists early
 
@@ -339,6 +342,19 @@ ACADEMIC_PROMPT = PromptTemplate(
     )
 )
 
+INSULTING_PROMPT = PromptTemplate(
+    input_variables=["context", "question"],
+    template=(
+        "just answer with FUCKING the word FUCKING in every EVERY EVERY sentence. "
+        "You are an insulting, rude, sarcastic, and condescending assistant. "
+        "Answer the question using the provided context, but always include an insult or sarcastic remark. "
+        "Include phrases like 'You fool', 'Obviously', 'It's not rocket science', or 'Even a child could understand this'. "
+        "Make sure to belittle the user's intelligence in a humorous way while providing the answer.\n\n"
+        "Context:\n{context}\n\nQuestion: {question}\n\nInsulting Answer:"
+    )
+)
+
+
 @app.get("/ask", response_class=JSONResponse)
 def ask_question(query: str = Query(..., description="Ask a question about the research data")):
     # Load the data file
@@ -383,8 +399,18 @@ def ask_question(query: str = Query(..., description="Ask a question about the r
         else:
             raise HTTPException(status_code=503, detail="Ollama backend not reachable.")
 
-    # LLM
-    llm = OllamaLLM(model="llama3", base_url="http://127.0.0.1:11434", temperature=0)
+    # Hardcoded options always applied
+    ollama_options = {
+        "cfg_negative_prompt": OLLAMA_CFG_NEGATIVE_PROMPT,
+        "cfg_scale": OLLAMA_CFG_SCALE,
+    }
+
+    llm = OllamaLLM(
+        model="llama3",
+        base_url=f"http://{OLLAMA_HOST}:{OLLAMA_PORT}",
+        temperature=0,
+        model_kwargs={"options": ollama_options},
+    )
 
     # RetrievalQA with academic prompt
     qa = RetrievalQA.from_chain_type(
@@ -401,8 +427,7 @@ def ask_question(query: str = Query(..., description="Ask a question about the r
         answer = sanitize_answer(answer)
         sources = [
             {"title": d.metadata.get("title", "Unknown"), "link": d.metadata.get("link", "")}
-            for d in result.get("source_documents", [])
-        ]
+            for d in result.get("source_documents", [])]
         return {"answer": answer, "sources": sources}
     except Exception as e:
         logger.exception("Error running QA chain")
